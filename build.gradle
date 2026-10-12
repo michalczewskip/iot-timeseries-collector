@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.26.0'
 }
 
 group = 'pl.edu.pw.elka'
@@ -18,11 +19,46 @@ repositories {
 }
 
 dependencies {
+	// Spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Tests
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// OpenAPI
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.12'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.54'
+	implementation 'io.swagger.core.v3:swagger-models:2.2.54'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = layout.projectDirectory.dir("/src/main/resources/api/zai-api-26z.yaml").getAsFile()
+	outputDir = layout.buildDirectory.dir("generated").get().asFile.path
+
+	apiPackage = "pl.edu.pw.elka.iottimeseriescollector.api"
+	modelPackage = "pl.edu.pw.elka.iottimeseriescollector.model"
+
+	configOptions = [
+			interfaceOnly: "true",
+			useTags: "true",
+			generateJsonIncludeAnnotations: "false",
+			generateJsonSetterNullsAnnotations: "false"
+	]
+}
+
+compileJava.dependsOn 'openApiGenerate'
+
+sourceSets {
+	main {
+		java {
+			srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+		}
+	}
 }
