@@ -1,0 +1,13 @@
+###
+GET http://{{host}}/api/measurements?
+    series={{$random.alphanumeric(8)}}&
+    from={{$random.alphanumeric(8)}}&
+    to={{$random.alphanumeric(8)}}&
+    sort={{$random.alphanumeric(8)}}&
+    limit={{$random.integer(100)}}
+
+###
+POST http://{{host}}/api/measurements
+
+###
+GET http://{{host}}/api/measurements/{{measurementId}}

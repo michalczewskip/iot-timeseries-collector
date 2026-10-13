@@ -1,0 +1,36 @@
+###
+GET http://{{host}}/api/series
+
+###
+POST http://{{host}}/api/series
+Content-Type: application/json
+
+{
+  "name": "",
+  "minValue": {},
+  "maxValue": {},
+  "color": "",
+  "icon": "",
+  "unit": ""
+}
+
+###
+DELETE http://{{host}}/api/series/{{seriesId}}
+
+###
+PUT http://{{host}}/api/series/{{seriesId}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "minValue": {},
+  "maxValue": {},
+  "color": "",
+  "icon": "",
+  "unit": ""
+}
+
+###
+GET http://{{host}}/api/series/{{seriesId}}
+
+

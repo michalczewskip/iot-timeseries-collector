@@ -1,0 +1,17 @@
+###
+GET http://{{host}}/api/sensors
+
+###
+POST http://{{host}}/api/sensors
+Content-Type: application/json
+
+{
+  "name": "",
+  "seriesId": {}
+}
+
+###
+DELETE http://{{host}}/api/sensors/{{sensorId}}
+
+###
+GET http://{{host}}/api/sensors/{{sensorId}}
