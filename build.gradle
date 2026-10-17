@@ -21,16 +21,25 @@ repositories {
 dependencies {
 	// Spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+
+	// Database
+	runtimeOnly 'org.postgresql:postgresql'
 
 	// Tests
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// OpenAPI
 	implementation 'org.openapitools:jackson-databind-nullable:0.2.12'
 	implementation 'io.swagger.core.v3:swagger-annotations:2.2.54'
 	implementation 'io.swagger.core.v3:swagger-models:2.2.54'
+}
+
+bootRun {
+	systemProperty("spring.profiles.active",
+			System.getProperty("spring.profiles.active", "local"))
 }
 
 test {
