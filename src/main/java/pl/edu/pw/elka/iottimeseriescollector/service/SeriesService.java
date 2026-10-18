@@ -102,12 +102,13 @@ public class SeriesService {
 
 
     private Series mapEntityToSeries(SeriesEntity entity) {
-        return new Series(
-                entity.getName(),
-                entity.getMinValue(),
-                entity.getMaxValue(),
-                entity.getColor(),
-                entity.getId());
+        Series series = new Series();
+        series.setName(entity.getName());
+        series.setMinValue(entity.getMinValue());
+        series.setMaxValue(entity.getMaxValue());
+        series.setColor(entity.getColor());
+        series.setId(entity.getId());
+        return series;
     }
 
     private <T> T unwrap(JsonNullable<T> jsonNullable) {
