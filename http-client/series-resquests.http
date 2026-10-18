@@ -4,6 +4,7 @@ GET http://{{host}}/api/series
 ###
 POST http://{{host}}/api/series
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "",
@@ -16,10 +17,12 @@ Content-Type: application/json
 
 ###
 DELETE http://{{host}}/api/series/{{seriesId}}
+Authorization: Bearer {{token}}
 
 ###
 PUT http://{{host}}/api/series/{{seriesId}}
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "",

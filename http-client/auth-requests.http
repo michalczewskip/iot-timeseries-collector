@@ -9,12 +9,14 @@ Content-Type: application/json
 
 ###
 POST http://{{host}}/api/auth/logout
+Authorization: Bearer {{token}}
 
 ###
 PUT http://{{host}}/api/auth/password
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "currentPassword": "",
-  "newPassword": ""
+  "currentPassword": "{{password}}",
+  "newPassword": "{{newPassword}}"
 }

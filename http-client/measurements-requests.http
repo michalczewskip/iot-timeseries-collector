@@ -8,6 +8,7 @@ GET http://{{host}}/api/measurements?
 
 ###
 POST http://{{host}}/api/measurements
+X-API-Key: {{apiKey}}
 
 ###
 GET http://{{host}}/api/measurements/{{measurementId}}
