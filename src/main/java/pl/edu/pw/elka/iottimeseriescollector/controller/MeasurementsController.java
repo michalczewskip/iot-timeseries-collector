@@ -1,8 +1,9 @@
 package pl.edu.pw.elka.iottimeseriescollector.controller;
 
 import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.MeasurementsApi;
@@ -11,9 +12,9 @@ import pl.edu.pw.elka.iottimeseriescollector.model.MeasurementInput;
 import pl.edu.pw.elka.iottimeseriescollector.security.apikey.SensorPrincipal;
 import pl.edu.pw.elka.iottimeseriescollector.service.MeasurementService;
 
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -43,9 +44,17 @@ public class MeasurementsController implements MeasurementsApi {
 
     @Override
     public ResponseEntity<Measurement> apiMeasurementsPost(MeasurementInput measurementInput) {
-        SensorPrincipal sensorPrincipal = (SensorPrincipal) Objects.requireNonNull(
-                SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof SensorPrincipal sensorPrincipal)) {
+            throw new BadCredentialsException("Nieprawidłowe uwierzytelnienie czujnika");
+        }
+        Measurement measurement = measurementService.addMeasurement(
+                measurementInput,
+                sensorPrincipal.id());
 
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        URI location = URI.create("/api/measurements/" + measurement.getId());
+        return ResponseEntity
+                .created(location)
+                .body(measurement);
     }
 }

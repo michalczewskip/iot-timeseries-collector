@@ -4,25 +4,31 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.elka.iottimeseriescollector.entity.MeasurementEntity;
+import pl.edu.pw.elka.iottimeseriescollector.entity.SensorEntity;
+import pl.edu.pw.elka.iottimeseriescollector.entity.SeriesEntity;
+import pl.edu.pw.elka.iottimeseriescollector.exception.UnprocessableEntityException;
 import pl.edu.pw.elka.iottimeseriescollector.model.Measurement;
+import pl.edu.pw.elka.iottimeseriescollector.model.MeasurementInput;
 import pl.edu.pw.elka.iottimeseriescollector.repository.MeasurementRepository;
+import pl.edu.pw.elka.iottimeseriescollector.repository.SensorRepository;
 import pl.edu.pw.elka.iottimeseriescollector.repository.spec.MeasurementSpecification;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class MeasurementService {
     private final MeasurementRepository measurementRepository;
+    private final SensorRepository sensorRepository;
 
-    public MeasurementService(MeasurementRepository measurementRepository) {
+    public MeasurementService(MeasurementRepository measurementRepository, SensorRepository sensorRepository) {
         this.measurementRepository = measurementRepository;
+        this.sensorRepository = sensorRepository;
     }
 
     @Transactional(readOnly = true)
@@ -52,6 +58,39 @@ public class MeasurementService {
                 .orElseThrow(() -> new NoSuchElementException("Pomiar o podanym ID nie istnieje"));
 
         return mapEntityToDto(measurement);
+    }
+
+    @Transactional
+    public Measurement addMeasurement(MeasurementInput measurementInput, UUID sensorId) {
+        SensorEntity sensorEntity = sensorRepository.findById(sensorId).orElseThrow(
+                () -> new BadCredentialsException("Czujnik nie istnieje"));
+
+        SeriesEntity seriesEntity = sensorEntity.getSeriesEntity();
+
+        BigDecimal minValue = seriesEntity.getMinValue();
+        BigDecimal maxValue = seriesEntity.getMaxValue();
+        BigDecimal newValue = measurementInput.getValue();
+        if (newValue.compareTo(minValue) < 0 || newValue.compareTo(maxValue) > 0) {
+            throw new UnprocessableEntityException("Wartość pomiaru poza zakresem serii");
+        }
+
+        OffsetDateTime measureTimestamp = Optional.ofNullable(measurementInput.getTimestamp())
+                .orElseGet(OffsetDateTime::now);
+
+        if (measureTimestamp.isAfter(OffsetDateTime.now().plusMinutes(5))) {
+            throw new UnprocessableEntityException("Niedopuszczalny znacznik czasu dla pomiaru. " +
+                    "Czas pomiaru nie może być z przyszłości dalszej niż 5 min");
+        }
+
+        MeasurementEntity measurementToSave = MeasurementEntity.builder()
+                .seriesEntity(seriesEntity)
+                .sensorEntity(sensorEntity)
+                .value(newValue)
+                .timestamp(measureTimestamp)
+                .build();
+
+        MeasurementEntity measurementSaved = measurementRepository.save(measurementToSave);
+        return mapEntityToDto(measurementSaved);
     }
 
     private List<UUID> parseSeriesIds(String series) {
