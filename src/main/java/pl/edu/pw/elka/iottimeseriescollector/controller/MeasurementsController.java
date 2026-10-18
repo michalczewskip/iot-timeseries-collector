@@ -9,6 +9,7 @@ import pl.edu.pw.elka.iottimeseriescollector.api.MeasurementsApi;
 import pl.edu.pw.elka.iottimeseriescollector.model.Measurement;
 import pl.edu.pw.elka.iottimeseriescollector.model.MeasurementInput;
 import pl.edu.pw.elka.iottimeseriescollector.security.apikey.SensorPrincipal;
+import pl.edu.pw.elka.iottimeseriescollector.service.MeasurementService;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -17,14 +18,27 @@ import java.util.UUID;
 
 @RestController
 public class MeasurementsController implements MeasurementsApi {
+
+    private final MeasurementService measurementService;
+
+    public MeasurementsController(MeasurementService measurementService) {
+        this.measurementService = measurementService;
+    }
+
     @Override
-    public ResponseEntity<List<Measurement>> apiMeasurementsGet(@Nullable String series, @Nullable OffsetDateTime from, @Nullable OffsetDateTime to, String sort, Integer limit) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    public ResponseEntity<List<Measurement>> apiMeasurementsGet(@Nullable String series,
+                                                                @Nullable OffsetDateTime from,
+                                                                @Nullable OffsetDateTime to,
+                                                                String sort,
+                                                                Integer limit) {
+        List<Measurement> measurements = measurementService.getMeasurement(series, from, to, sort, limit);
+        return ResponseEntity.ok(measurements);
     }
 
     @Override
     public ResponseEntity<Measurement> apiMeasurementsMeasurementIdGet(UUID measurementId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        Measurement measurement = measurementService.getMeasurement(measurementId);
+        return ResponseEntity.ok(measurement);
     }
 
     @Override

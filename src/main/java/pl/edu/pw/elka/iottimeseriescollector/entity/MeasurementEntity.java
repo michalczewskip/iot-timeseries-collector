@@ -32,5 +32,5 @@ public class MeasurementEntity {
     private BigDecimal value;
 
     @Column(name = "measure_time", nullable = false)
-    private OffsetDateTime measureTime;
+    private OffsetDateTime timestamp;
 }
