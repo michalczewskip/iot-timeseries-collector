@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.MeasurementsApi;
-import pl.edu.pw.elka.iottimeseriescollector.model.Id;
 import pl.edu.pw.elka.iottimeseriescollector.model.Measurement;
 import pl.edu.pw.elka.iottimeseriescollector.model.MeasurementInput;
 import pl.edu.pw.elka.iottimeseriescollector.security.apikey.SensorPrincipal;
@@ -14,6 +13,7 @@ import pl.edu.pw.elka.iottimeseriescollector.security.apikey.SensorPrincipal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 public class MeasurementsController implements MeasurementsApi {
@@ -23,7 +23,7 @@ public class MeasurementsController implements MeasurementsApi {
     }
 
     @Override
-    public ResponseEntity<Measurement> apiMeasurementsMeasurementIdGet(Id measurementId) {
+    public ResponseEntity<Measurement> apiMeasurementsMeasurementIdGet(UUID measurementId) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 

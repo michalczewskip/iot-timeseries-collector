@@ -66,11 +66,16 @@ openApiGenerate {
 	apiPackage = "pl.edu.pw.elka.iottimeseriescollector.api"
 	modelPackage = "pl.edu.pw.elka.iottimeseriescollector.model"
 
+	schemaMappings = [ "Id": "java.util.UUID" ]
+	typeMappings = ["Id": "java.util.UUID"]
+	importMappings = [ "java.util.UUID": "java.util.UUID" ]
+
 	configOptions = [
 			interfaceOnly: "true",
 			useTags: "true",
 			generateJsonIncludeAnnotations: "false",
-			generateJsonSetterNullsAnnotations: "false"
+			generateJsonSetterNullsAnnotations: "false",
+			openModelNullable: "false"
 	]
 }
 

@@ -19,11 +19,13 @@ import pl.edu.pw.elka.iottimeseriescollector.model.Problem;
 import pl.edu.pw.elka.iottimeseriescollector.model.ProblemErrorsInner;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @SuppressWarnings("unused")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // HTTP 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Problem> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Problem problem = buildProblem(HttpStatus.BAD_REQUEST, "Bad Request", "Niepoprawne dane wejściowe", request.getRequestURI());
@@ -37,9 +39,30 @@ public class GlobalExceptionHandler {
     }
 
     // HTTP 400
-    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
     public ResponseEntity<Problem> handleBadRequest(Exception ex, HttpServletRequest request) {
         return createResponse(HttpStatus.BAD_REQUEST, "Bad Request", "Niepoprawna składnia żądania lub typ parametru", request);
+    }
+
+    // HTTP 404 or HTTP 400
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Problem> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        // Intercepts type mismatch caused by mapping the OpenAPI Id schema to UUID (e.g., '999999999') to return 404 Not Found
+        if (ex.getRequiredType() != null && ex.getRequiredType().equals(UUID.class)) {
+            return createResponse(
+                    HttpStatus.NOT_FOUND,
+                    "Not Found",
+                    "Zasób o podanym identyfikatorze nie został odnaleziony",
+                    request
+            );
+        }
+        // Other causes maintain returning 400 Bad Request
+        return createResponse(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                "Nieprawidłowy format parametru: " + ex.getName(),
+                request
+        );
     }
 
     // HTTP 401 Unauthorized
