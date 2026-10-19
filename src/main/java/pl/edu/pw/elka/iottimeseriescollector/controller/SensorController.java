@@ -1,6 +1,8 @@
 package pl.edu.pw.elka.iottimeseriescollector.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.SensorsApi;
 import pl.edu.pw.elka.iottimeseriescollector.model.Sensor;
@@ -37,7 +39,8 @@ public class SensorController implements SensorsApi {
     }
 
     @Override
-    public ResponseEntity<Void> apiSensorsSensorIdDelete(UUID sensorId) {
+    @DeleteMapping(value = "/api/sensors/{sensorId}", produces = {}) // Overrides default OpenAPI generator 'produces' header to avoid HTTP 406 on 204
+    public ResponseEntity<Void> apiSensorsSensorIdDelete(@PathVariable("sensorId") UUID sensorId) {
         sensorService.deleteSensor(sensorId);
         return ResponseEntity.noContent().build();
     }

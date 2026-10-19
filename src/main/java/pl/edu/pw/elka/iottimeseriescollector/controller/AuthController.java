@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.AuthApi;
 import pl.edu.pw.elka.iottimeseriescollector.entity.UserEntity;
@@ -20,6 +21,7 @@ import pl.edu.pw.elka.iottimeseriescollector.security.jwt.JwtManager;
 import java.security.Principal;
 import java.util.Optional;
 
+@SuppressWarnings("RedundantDefaultParameterValueAssignment")
 @RestController
 public class AuthController implements AuthApi {
 
@@ -59,6 +61,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
+    @PostMapping(value = "/api/auth/logout", produces = {}) // Overrides default OpenAPI generator 'produces' header to avoid HTTP 406 on 204
     public ResponseEntity<Void> apiAuthLogoutPost() {
         String authHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
 

@@ -1,6 +1,8 @@
 package pl.edu.pw.elka.iottimeseriescollector.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.SeriesApi;
 import pl.edu.pw.elka.iottimeseriescollector.model.Series;
@@ -38,7 +40,8 @@ public class SeriesController implements SeriesApi {
     }
 
     @Override
-    public ResponseEntity<Void> apiSeriesSeriesIdDelete(UUID seriesId) {
+    @DeleteMapping(value = "/api/series/{seriesId}", produces = {}) // Overrides default OpenAPI generator 'produces' header to avoid HTTP 406 on 204
+    public ResponseEntity<Void> apiSeriesSeriesIdDelete(@PathVariable("seriesId") UUID seriesId) {
         seriesService.deleteSeries(seriesId);
         return ResponseEntity.noContent().build();
     }
