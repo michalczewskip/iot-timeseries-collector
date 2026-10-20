@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pw.elka.iottimeseriescollector.api.AuthApi;
 import pl.edu.pw.elka.iottimeseriescollector.entity.UserEntity;
@@ -77,6 +78,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
+    @PutMapping(value = "/api/auth/password", produces = {}) // Overrides default OpenAPI generator 'produces' header to avoid HTTP 406 on 204
     public ResponseEntity<Void> apiAuthPasswordPut(PasswordChange passwordChange) {
         String username = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Principal::getName)
