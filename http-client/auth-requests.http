@@ -1,0 +1,22 @@
+###
+POST http://{{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+###
+POST http://{{host}}/api/auth/logout
+Authorization: Bearer {{token}}
+
+###
+PUT http://{{host}}/api/auth/password
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "currentPassword": "{{password}}",
+  "newPassword": "{{newPassword}}"
+}
