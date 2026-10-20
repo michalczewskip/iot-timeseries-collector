@@ -1,6 +1,4 @@
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
+build
 
 ### IntelliJ IDEA ###
 .idea
@@ -11,6 +9,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### Local env ###
-src/main/resources/application-local.yaml
