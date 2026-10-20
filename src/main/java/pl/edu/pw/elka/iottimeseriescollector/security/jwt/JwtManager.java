@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,8 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 public class JwtManager {
 
@@ -40,8 +43,9 @@ public class JwtManager {
         Date expiration = new Date(nowMillis + (expirationTime * 1000L));
 
         return Jwts.builder()
-                .claims(extraClaims)
                 .subject(username)
+                .claims(extraClaims)
+                .id(UUID.randomUUID().toString()) // Needed to prevent same token to issued (can cause blacklisting both tokens if issued at the same issued time)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(secretKey)
@@ -51,21 +55,42 @@ public class JwtManager {
     public void invalidateToken(String token) {
         if (token != null && !token.isBlank()) {
             try {
-                blacklistedTokens.put(token, extractAllClaims(token).getExpiration());
-            } catch (JwtException | IllegalArgumentException ignored) {
+                Date exp = extractAllClaims(token).getExpiration();
+                blacklistedTokens.put(token, exp);
+                log.info("Token został dodany do czarnej listy (wygasa: {})", exp);
+            } catch (JwtException | IllegalArgumentException e) {
                 // Do not save token if it is expired or invalid
+                log.warn("Nie udało się unieważnić tokena (błędny lub wygasł): {}", e.getMessage());
             }
         }
     }
 
     public boolean isTokenValid(String token, String expectedUsername) {
-        if (token == null || token.isBlank() || blacklistedTokens.containsKey(token)) {
+        if (token == null || token.isBlank()) {
+            log.warn("Walidacja JWT: Token jest pusty lub null");
+            return false;
+        }
+        if (blacklistedTokens.containsKey(token)) {
+            log.warn("Walidacja JWT: Token znajduje się na czarnej liście!");
             return false;
         }
         try {
             String extractedUser = extractUsername(token);
-            return (extractedUser.equals(expectedUsername) && !isTokenExpired(token));
+            boolean userMatches = extractedUser != null && extractedUser.equals(expectedUsername);
+            boolean expired = isTokenExpired(token);
+            if (!userMatches) {
+                log.warn("Walidacja JWT: Niezgodność użytkownika! W tokenie: '{}', oczekiwano: '{}'", extractedUser, expectedUsername);
+            }
+            if (expired) {
+                log.warn("Walidacja JWT: Token wygasł dla użytkownika: {}", extractedUser);
+            }
+            if (userMatches && !expired) {
+                log.debug("Walidacja JWT: Token jest w pełni poprawny dla użytkownika: {}", extractedUser);
+                return true;
+            }
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("Walidacja JWT: Wyjątek podczas sprawdzania tokena: {}", e.getMessage());
             return false;
         }
     }
