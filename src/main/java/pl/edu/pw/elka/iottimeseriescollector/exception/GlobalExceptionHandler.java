@@ -11,12 +11,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.edu.pw.elka.iottimeseriescollector.model.Problem;
 import pl.edu.pw.elka.iottimeseriescollector.model.ProblemErrorsInner;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -38,13 +40,26 @@ public class GlobalExceptionHandler {
         return toResponseEntity(HttpStatus.BAD_REQUEST, problem);
     }
 
-    // HTTP 400
-    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
-    public ResponseEntity<Problem> handleBadRequest(Exception ex, HttpServletRequest request) {
-        return createResponse(HttpStatus.BAD_REQUEST, "Bad Request", "Niepoprawna składnia żądania lub typ parametru", request);
+    // HTTP 400 or HTTP 422
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Problem> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        // Intercepts type mismatch in JSON request body caused by mapping the OpenAPI Id schema to UUID (e.g., '999999999') to return 422 Unprocessable Entity
+        Throwable rootCause = ex.getRootCause();
+        if (rootCause instanceof InvalidFormatException ife) {
+            if (ife.getTargetType() != null && ife.getTargetType().equals(UUID.class)) {
+                return handleUnprocessable(new UnprocessableEntityException("Nie znaleziono serii o podanym identyfikatorze"), request);
+            }
+        }
+
+        return createResponse(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                "Niepoprawna składnia żądania lub typ parametru",
+                request
+        );
     }
 
-    // HTTP 404 or HTTP 400
+    // HTTP 400 or HTTP 404
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Problem> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
         // Intercepts type mismatch caused by mapping the OpenAPI Id schema to UUID (e.g., '999999999') to return 404 Not Found
@@ -83,6 +98,17 @@ public class GlobalExceptionHandler {
         return createResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage() != null ? ex.getMessage() : "Zasób nie istnieje", request);
     }
 
+    // HTTP 405 Method Not Allowed
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Problem> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        return createResponse(
+                HttpStatus.METHOD_NOT_ALLOWED,
+                "Method Not Allowed",
+                "Metoda " + ex.getMethod() + " nie jest obsługiwana dla tego zasobu",
+                request
+        );
+    }
+
     // HTTP 406 Not Acceptable
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<Problem> handleNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
@@ -91,7 +117,7 @@ public class GlobalExceptionHandler {
 
     // HTTP 415 Unsupported Media Type
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Problem> handleUnsupportedMediaType(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
+    public ResponseEntity<Problem> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
         return createResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported Media", "Treść żadania w nieobsługiwanym formacie", request);
     }
 
