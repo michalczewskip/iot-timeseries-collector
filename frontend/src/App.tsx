@@ -1,10 +1,24 @@
-function App() {
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Header } from './components/Header';
+import { Dashboard } from './pages/Dashboard';
+import { Admin } from './pages/Admin';
+import './App.css';
+
+export function App() {
   return (
-      <div className="container">
-        <h1>IoT Timeseries Dashboard</h1>
-        <p>System status and sensor monitoring</p>
+    <BrowserRouter>
+      <div className="app-layout">
+        <Header />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin" element={<Admin />} />
+          </Routes>
+        </main>
       </div>
-  )
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
