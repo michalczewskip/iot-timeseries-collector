@@ -7,7 +7,7 @@ export function Header() {
     const navigate = useNavigate();
     const location = useLocation();
     const { isAuthenticated, logout } = useAuth();
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const isDashboardActive = location.pathname === '/dashboard' || location.pathname === '/';
@@ -27,7 +27,7 @@ export function Header() {
                 <div className="header-logo">
                     <h2>System IoT</h2>
                 </div>
-                
+
                 <div className="toggle-container">
                     <button
                         className={`toggle-btn ${isDashboardActive ? 'active' : ''}`}
@@ -50,9 +50,9 @@ export function Header() {
                 </div>
             </header>
 
-            <LoginModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
+            <LoginModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
             />
         </>
     );

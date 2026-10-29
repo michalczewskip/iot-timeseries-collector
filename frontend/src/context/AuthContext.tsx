@@ -17,22 +17,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setToken(newToken);
     };
 
-const logout = async () => {
-    try {
-        if (token) {
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+    const logout = async () => {
+        try {
+            if (token) {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('Błąd podczas wylogowywania na serwerze', err);
+        } finally {
+            setToken(null);
         }
-    } catch (err) {
-        console.error('Błąd podczas wylogowywania na serwerze', err);
-    } finally {
-        setToken(null);
-    }
-};
+    };
 
     return (
         <AuthContext.Provider value={{ token, isAuthenticated: !!token, login, logout }}>
