@@ -1,0 +1,8 @@
+.chart-container {
+    width: 100%;
+    height: 350px; /* Kluczowe: bez tego wykres ma wysokość 0 i znika! */
+}
+
+.measurements-chart-wrapper {
+    width: 100%;
+}

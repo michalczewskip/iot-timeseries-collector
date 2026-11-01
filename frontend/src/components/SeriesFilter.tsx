@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './SeriesFilter.css';
 
 interface SeriesFilterProps {
@@ -9,9 +9,27 @@ interface SeriesFilterProps {
 
 export function SeriesFilter({ availableSeries, selectedSeries, onChange }: SeriesFilterProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Nasłuchiwanie kliknięć poza komponentem
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
 
     const handleSelectAll = () => {
-        onChange(availableSeries);
+        onChange([...availableSeries]);
     };
 
     const handleClearAll = () => {
@@ -27,7 +45,7 @@ export function SeriesFilter({ availableSeries, selectedSeries, onChange }: Seri
     };
 
     return (
-        <div className="series-filter-container">
+        <div className="series-filter-container" ref={containerRef}>
             <button
                 type="button"
                 className="series-filter-toggle-btn"

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FilterPanel } from "../components/FilterPanel";
 import { type SeriesInfo, type MeasurementData, MeasurementsChart } from '../components/MeasurementsChart';
-
+import { MeasurementsTable } from '../components/MeasurementsTable';
 
 const getLocalDateTime = (daysOffset = 0, hours = 12) => {
   const d = new Date();
@@ -17,26 +17,19 @@ const getLocalDateTime = (daysOffset = 0, hours = 12) => {
   return `${year}-${month}-${day}T${h}:${m}`;
 };
 
-// TODO Do usuniecia w docelowej implementacji
-const FALLBACK_SERIES: SeriesInfo[] = [
-  { id: 1, name: 'Temperatura', color: '#2563eb', unit: '°C' },
-  { id: 2, name: 'Wilgotność', color: '#10b981', unit: '%' },
-  { id: 3, name: 'Ciśnienie', color: '#f59e0b', unit: 'hPa' },
-  { id: 4, name: 'Poziom CO2', color: '#8b5cf6', unit: 'ppm' },
-];
-
 export function Dashboard() {
   const [fromDate, setFromDate] = useState(getLocalDateTime(-7, 12));
   const [toDate, setToDate] = useState(getLocalDateTime(7, 12));
 
-  const [seriesList, setSeriesList] = useState<SeriesInfo[]>(FALLBACK_SERIES);
-
-  const [selectedSeries, setSelectedSeries] = useState<string[]>(
-    FALLBACK_SERIES.map(s => s.name)
-  );
-
+  const [seriesList, setSeriesList] = useState<SeriesInfo[]>([]);
+  const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
   const [measurements, setMeasurements] = useState<MeasurementData[]>([]);
 
+  // Stany dla dwukierunkowego podświetlania (hover)
+  const [hoveredTimestamp, setHoveredTimestamp] = useState<string | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<{ timestamp: string; seriesId: string | number } | null>(null);
+
+  // Pobieranie listy serii z API
   useEffect(() => {
     fetch('/api/series')
       .then((res) => {
@@ -49,8 +42,10 @@ export function Dashboard() {
           setSelectedSeries(data.map(s => s.name));
         }
       })
-      .catch(() => {
-        console.warn('Używam zapasowych serii (fallback)');
+      .catch((err) => {
+        console.error('Nie udało się pobrać serii danych:', err);
+        setSeriesList([]);
+        setSelectedSeries([]);
       });
   }, []);
 
@@ -58,6 +53,7 @@ export function Dashboard() {
     selectedSeries.includes(s.name) || selectedSeries.includes(String(s.id))
   );
 
+  // Pobieranie pomiarów z API w zależności od wybranego zakresu czasowego i serii
   useEffect(() => {
     if (activeSeriesObjects.length === 0) {
       setMeasurements([]);
@@ -75,28 +71,48 @@ export function Dashboard() {
         if (!res.ok) throw new Error('Błąd podczas pobierania pomiarów');
         return res.json();
       })
-      .then((data: MeasurementData[]) => setMeasurements(data))
-      .catch((err) => console.error(err));
+      .then((data: MeasurementData[]) => {
+        if (Array.isArray(data)) {
+          setMeasurements(data);
+        }
+      })
+      .catch((err) => {
+        console.error('Nie udało się pobrać pomiarów:', err);
+        setMeasurements([]);
+      });
   }, [fromDate, toDate, selectedSeries, seriesList]);
 
   return (
-    <div className="page-content">
-      <h1>Wizualizacja danych IoT</h1>
-      
-      <FilterPanel 
-        fromDate={fromDate} 
+    <div className="page-content" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto', padding: '16px', boxSizing: 'border-box' }}>
+      <FilterPanel
+        fromDate={fromDate}
         setFromDate={setFromDate}
-        toDate={toDate} 
+        toDate={toDate}
         setToDate={setToDate}
         availableSeries={seriesList.map(s => s.name)}
         selectedSeries={selectedSeries}
         onSeriesChange={setSelectedSeries}
       />
 
-      <section className="chart-section" style={{ marginTop: '20px' }}>
-        <MeasurementsChart 
+      <section className="chart-section" style={{ marginTop: '20px', width: '100%' }}>
+        <MeasurementsChart
           selectedSeriesObjects={activeSeriesObjects}
           measurements={measurements}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={setHoveredTimestamp}
+          hoveredCell={hoveredCell}
+          onHoverCell={setHoveredCell}
+        />
+      </section>
+
+      <section className="table-section" style={{ marginTop: '30px', width: '100%' }}>
+        <MeasurementsTable
+          selectedSeriesObjects={activeSeriesObjects}
+          measurements={measurements}
+          hoveredTimestamp={hoveredTimestamp}
+          onHoverTimestamp={setHoveredTimestamp}
+          hoveredCell={hoveredCell}
+          onHoverCell={setHoveredCell}
         />
       </section>
     </div>
