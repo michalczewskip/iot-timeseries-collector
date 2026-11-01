@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '4.1.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.openapi.generator' version '7.26.0'
+	id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 group = 'pl.edu.pw.elka'
@@ -49,7 +50,6 @@ dependencies {
 	// Tests
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 }
 
 bootRun {
@@ -59,6 +59,35 @@ bootRun {
 
 test {
 	useJUnitPlatform()
+}
+
+node {
+	version = '24.20.0'
+	download = true
+	workDir = file("${project.projectDir}/../frontend/.gradle-nodejs")
+	npmWorkDir = file("${project.projectDir}/../frontend/.gradle-npm")
+	nodeProjectDir = file("${project.projectDir}/../frontend")
+}
+tasks.register('installFrontend', NpmTask) {
+	args = ['install']
+}
+tasks.register('buildFrontend', NpmTask) {
+	dependsOn 'installFrontend'
+	args = ['run', 'build']
+}
+
+tasks.register('copyFrontendFiles', Copy) {
+	dependsOn 'buildFrontend'
+	from "${project.projectDir}/../frontend/dist"
+	into "${project.projectDir}/src/main/resources/static"
+}
+
+tasks.named('processResources') {
+	dependsOn 'copyFrontendFiles'
+}
+
+tasks.named('bootJar') {
+	dependsOn 'copyFrontendFiles'
 }
 
 openApiGenerate {

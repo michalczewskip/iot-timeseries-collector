@@ -9,3 +9,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# --- Docker & Baza Danych ---
+postgres_data/
+
+# --- Środowisko i systemowe ---
+.env
+.DS_Store
+Thumbs.db
+*.log
