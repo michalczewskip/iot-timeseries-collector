@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: iot-timeseries-collector
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.yaml
+    default-schema: public
+    liquibase-schema: public
+    parameters:
+      PASS_HASH: ${PASS_HASH}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+logbook:
+  format:
+    style: http
+  filter:
+    enabled: true
+
+logging:
+  level:
+    org:
+      zalando:
+        logbook: TRACE
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-seconds: 3600

@@ -1,0 +1,122 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.1.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.26.0'
+	id 'com.github.node-gradle.node' version '7.0.1'
+}
+
+group = 'pl.edu.pw.elka'
+version = '0.0.1'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Database
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// OpenAPI
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.12'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.54'
+	implementation 'io.swagger.core.v3:swagger-models:2.2.54'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.13.0'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+	// Utils
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Logging
+	implementation 'org.zalando:logbook-spring-boot-starter:4.2.0'
+
+	// Tests
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootRun {
+	systemProperty("spring.profiles.active",
+			System.getProperty("spring.profiles.active", "local"))
+}
+
+test {
+	useJUnitPlatform()
+}
+
+node {
+	version = '24.20.0'
+	download = true
+	workDir = file("${project.projectDir}/../frontend/.gradle-nodejs")
+	npmWorkDir = file("${project.projectDir}/../frontend/.gradle-npm")
+	nodeProjectDir = file("${project.projectDir}/../frontend")
+}
+tasks.register('installFrontend', NpmTask) {
+	args = ['install']
+}
+tasks.register('buildFrontend', NpmTask) {
+	dependsOn 'installFrontend'
+	args = ['run', 'build']
+}
+
+tasks.register('copyFrontendFiles', Copy) {
+	dependsOn 'buildFrontend'
+	from "${project.projectDir}/../frontend/dist"
+	into "${project.projectDir}/src/main/resources/static"
+}
+
+tasks.named('processResources') {
+	dependsOn 'copyFrontendFiles'
+}
+
+tasks.named('bootJar') {
+	dependsOn 'copyFrontendFiles'
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = layout.projectDirectory.dir("/src/main/resources/api/zai-api-26z.yaml").getAsFile()
+	outputDir = layout.buildDirectory.dir("generated").get().asFile.path
+
+	apiPackage = "pl.edu.pw.elka.iottimeseriescollector.api"
+	modelPackage = "pl.edu.pw.elka.iottimeseriescollector.model"
+
+	schemaMappings = [ "Id": "java.util.UUID" ]
+	typeMappings = ["Id": "java.util.UUID"]
+	importMappings = [ "java.util.UUID": "java.util.UUID" ]
+
+	configOptions = [
+			interfaceOnly: "true",
+			useTags: "true",
+			generateJsonIncludeAnnotations: "false",
+			generateJsonSetterNullsAnnotations: "false",
+			openModelNullable: "false"
+	]
+}
+
+compileJava.dependsOn 'openApiGenerate'
+
+sourceSets {
+	main {
+		java {
+			srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+		}
+	}
+}

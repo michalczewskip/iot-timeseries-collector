@@ -1,0 +1,61 @@
+.series-filter-container {
+  position: relative;
+  display: inline-block;
+}
+
+.series-dropdown-menu {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 100;
+  min-width: 220px;
+}
+
+.series-dropdown-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 8px;
+}
+
+.series-dropdown-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+.select-all-btn {
+  color: #007bff;
+}
+
+.clear-all-btn {
+  color: #dc3545;
+}
+
+.series-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.series-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.no-series-text {
+  font-size: 13px;
+  color: #666666;
+  margin: 0;
+}

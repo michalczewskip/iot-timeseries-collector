@@ -1,0 +1,19 @@
+# --- Backend (Gradle / Java) ---
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+src/main/resources/static/*
+!src/main/resources/static/.gitkeep
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+### VS Code ###
+.vscode/
+
+### Local env ###
+src/main/resources/application-local.yaml

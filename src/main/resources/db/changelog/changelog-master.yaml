@@ -1,5 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: classpath:db/changelog/changesets/001-create-data-tables.sql
-  - include:
-      file: classpath:db/changelog/changesets/002-create-users-table.sql
