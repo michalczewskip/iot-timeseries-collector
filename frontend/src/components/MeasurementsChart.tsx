@@ -202,9 +202,9 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                         <Tooltip
                             labelFormatter={(label) => {
                                 try {
-                                    return `Czas: ${new Date(label).toLocaleString()}`;
+                                    return `Czas: ${new Date(label as string | number).toLocaleString()}`;
                                 } catch {
-                                    return `Czas: ${label}`;
+                                    return `Czas: ${String(label)}`;
                                 }
                             }}
                         />
