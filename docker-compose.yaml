@@ -13,7 +13,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 180M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
@@ -34,11 +34,11 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - PASS_HASH=${PASS_HASH}
-      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx300m -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=192m -XX:+UseContainerSupport -Xss512k
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx200m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport -Xss256k
     deploy:
       resources:
         limits:
-          memory: 650M
+          memory: 450M
     depends_on:
       postgres:
         condition: service_healthy
