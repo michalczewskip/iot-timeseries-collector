@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 
 interface AuthContextType {
     token: string | null;
+    username: string | null;
     isAuthenticated: boolean;
-    login: (token: string) => void;
+    login: (token: string, username: string) => void;
     logout: () => void;
 }
 
@@ -12,9 +13,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
 
-    const login = (newToken: string) => {
+    const login = (newToken: string, loggedUsername: string) => {
         setToken(newToken);
+        setUsername(loggedUsername);
     };
 
     const logout = async () => {
@@ -31,11 +34,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             console.error('Błąd podczas wylogowywania na serwerze', err);
         } finally {
             setToken(null);
+            setUsername(null);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ token, isAuthenticated: !!token, login, logout }}>
+        <AuthContext.Provider value={{ token, username, isAuthenticated: !!token, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

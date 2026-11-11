@@ -23,7 +23,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
     if (!isOpen) return null; // Render nothing if pop up not open
 
-    const handleSubmit = async (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -39,7 +39,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             }
 
             const data = await response.json();
-            login(data.accessToken);
+
+            login(data.accessToken, username);
             onClose();
         } catch (err: any) {
             setError(err.message || 'Wystąpił błąd podczas logowania');
