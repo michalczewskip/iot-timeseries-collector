@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import pl.edu.pw.elka.iottimeseriescollector.entity.MeasurementEntity;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, UUID>, JpaSpecificationExecutor<MeasurementEntity> {
@@ -18,4 +19,6 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
             @Param("seriesId") UUID seriesId,
             @Param("minVal") BigDecimal minVal,
             @Param("maxVal") BigDecimal maxVal);
+
+    Optional<MeasurementEntity> findFirstBySensorEntityIdOrderByTimestampDesc(UUID sensorId);
 }
