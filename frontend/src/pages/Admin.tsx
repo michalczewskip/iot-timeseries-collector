@@ -1,11 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { SeriesManagement } from '../components/SeriesManagement';
+import { SensorManagement } from '../components/SensorManagement';
 import { LoginModal } from '../components/LoginModal';
+import type { DataSeries } from '../components/SeriesManagement';
 
 export function Admin() {
     const { isAuthenticated, token } = useAuth();
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    
+    const [seriesList, setSeriesList] = useState<DataSeries[]>([]);
+
+    // Pobieranie listy serii w komponencie nadrzędnym
+    const fetchSeries = async () => {
+        try {
+            const response = await fetch('/api/series');
+            if (response.ok) {
+                const data = await response.json();
+                setSeriesList(data);
+            }
+        } catch (err) {
+            console.error('Nie udało się pobrać listy serii w Admin:', err);
+        }
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchSeries();
+        }
+    }, [isAuthenticated]);
 
     // Jeśli użytkownik nie jest zalogowany, blokujemy widok panelu i pokazujemy komunikat z przyciskiem logowania
     if (!isAuthenticated) {
@@ -46,11 +69,10 @@ export function Admin() {
                 </label>
             </div>
 
-            {/* Pierwszy główny komponent: Zarządzanie seriami danych */}
             <SeriesManagement token={token} />
 
-            {/* Drugi główny komponent (czujniki IoT, gdy go dopiszesz) */}
-            {/* <SensorManagement token={token} /> */}
+            {/* Zarządzanie czujnikami IoT z przekazaną listą serii do selecta */}
+            <SensorManagement token={token} seriesList={seriesList} />
         </div>
     );
 }
