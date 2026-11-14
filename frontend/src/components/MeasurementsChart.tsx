@@ -3,25 +3,25 @@ import {
     ResponsiveContainer,
     LineChart,
     Line,
+    CartesianGrid,
     XAxis,
     YAxis,
-    CartesianGrid,
-    Tooltip,
+    Tooltip
 } from 'recharts';
 import './MeasurementsChart.css';
 
 export interface SeriesInfo {
-    id: number | string;
+    id: string | number;
     name: string;
-    color: string;
-    unit?: string | null;
+    unit?: string;
+    color?: string;
 }
 
 export interface MeasurementData {
-    id?: number | string;
-    seriesId: number | string;
-    value: number;
     timestamp: string;
+    seriesId: string | number;
+    value: number | string;
+    [key: string]: any;
 }
 
 interface MeasurementsChartProps {
@@ -79,7 +79,6 @@ const renderCustomDot = (
                     />
                 );
             case 'star':
-                // Corrected star offsets relative to center (cx, cy)
                 return (
                     <polygon
                         key={key}
@@ -97,6 +96,7 @@ const renderCustomDot = (
         }
     };
 };
+
 export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
     selectedSeriesObjects,
     measurements,
@@ -104,7 +104,6 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
     hoveredTimestamp,
     hoveredCell,
 }) => {
-    // Przetwarzanie danych: grupujemy pomiary po timestampie
     const chartData = useMemo(() => {
         const map = new Map<string, Record<string, any>>();
 
@@ -115,7 +114,7 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                 });
             }
             const entry = map.get(m.timestamp)!;
-            entry[`series_${m.seriesId}`] = Number(m.value); // Upewniamy się, że wartość to liczba
+            entry[`series_${m.seriesId}`] = Number(m.value);
         });
 
         return Array.from(map.values()).sort(
@@ -123,7 +122,6 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
         );
     }, [measurements]);
 
-    // Formatowanie pełnej daty i godziny na osi X (np. "24.10, 14:30")
     const formatXAxis = (isoString: string) => {
         try {
             const date = new Date(isoString);
@@ -140,22 +138,23 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
     };
 
     return (
-        <div style={{ width: '100%' }}>
+        <div className="measurements-chart-wrapper">
             {/* Responsywna legenda */}
-            <div style={{ marginBottom: '10px' }}>
-                <ul style={{ display: 'flex', justifyContent: 'center', listStyle: 'none', padding: 0, margin: 0, gap: '16px', flexWrap: 'wrap' }}>
+            <div className="chart-legend-container">
+                <ul className="chart-legend-list">
                     {selectedSeriesObjects.map((series, index) => {
                         const shape = SHAPES[index % SHAPES.length];
                         const labelName = series.unit ? `${series.name} (${series.unit})` : series.name;
+                        const seriesColor = series.color || '#006666';
 
                         return (
-                            <li key={series.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
-                                <svg width="12" height="12" style={{ display: 'inline-block' }}>
-                                    {shape === 'square' && <rect x="1" y="1" width="10" height="10" fill={series.color} />}
-                                    {shape === 'circle' && <circle cx="6" cy="6" r="5" fill={series.color} />}
-                                    {shape === 'triangle' && <polygon points="6,1 11,11 1,11" fill={series.color} />}
-                                    {shape === 'diamond' && <polygon points="6,1 11,6 6,11 1,6" fill={series.color} />}
-                                    {shape === 'star' && <polygon points="6,1 7,4 11,4 8,6 9,10 6,8 3,10 4,6 1,4 5,4" fill={series.color} />}
+                            <li key={series.id} className="chart-legend-item">
+                                <svg width="12" height="12" className="chart-legend-svg">
+                                    {shape === 'square' && <rect x="1" y="1" width="10" height="10" fill={seriesColor} />}
+                                    {shape === 'circle' && <circle cx="6" cy="6" r="5" fill={seriesColor} />}
+                                    {shape === 'triangle' && <polygon points="6,1 11,11 1,11" fill={seriesColor} />}
+                                    {shape === 'diamond' && <polygon points="6,1 11,6 6,11 1,6" fill={seriesColor} />}
+                                    {shape === 'star' && <polygon points="6,1 7,4 11,4 8,6 9,10 6,8 3,10 4,6 1,4 5,4" fill={seriesColor} />}
                                 </svg>
                                 <span>{labelName}</span>
                             </li>
@@ -164,12 +163,12 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                 </ul>
             </div>
 
-            {/* Wykres */}
-            <div style={{ width: '100%', height: '350px' }}>
+            {/* Wykres z wymuszoną wysokością */}
+            <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={chartData}
-                        margin={{ top: 10, right: 10, left: -10, bottom: 35 }}
+                        margin={{ top: 15, right: 15, left: -10, bottom: 35 }}
                         onMouseMove={(e: any) => {
                             if (e && e.activePayload && e.activePayload.length > 0) {
                                 onHoverTimestamp?.(e.activePayload[0].payload.timestamp);
@@ -177,53 +176,83 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                         }}
                         onMouseLeave={() => onHoverTimestamp?.(null)}
                     >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
 
-                        {/* OŚ X: Pełna data i godzina z rotacją dla responsywności na 360px */}
                         <XAxis
                             dataKey="timestamp"
                             tickFormatter={formatXAxis}
                             stroke="#64748b"
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 10, fill: '#64748b' }}
                             interval="preserveStartEnd"
                             angle={-25}
                             textAnchor="end"
                             height={40}
+                            tickLine={{ stroke: '#cbd5e1' }}
+                            axisLine={{ stroke: '#cbd5e1' }}
                         />
 
-                        {/* OŚ Y: Prawidłowe wartości numeryczne pomiarów */}
                         <YAxis
                             stroke="#64748b"
-                            tick={{ fontSize: 11 }}
+                            tick={{ fontSize: 11, fill: '#64748b' }}
                             width={45}
                             domain={['auto', 'auto']}
+                            tickLine={{ stroke: '#cbd5e1' }}
+                            axisLine={{ stroke: '#cbd5e1' }}
                         />
 
                         <Tooltip
-                            labelFormatter={(label) => {
+                            content={({ active, payload, label }) => {
+                                if (!active || !payload || payload.length === 0) return null;
+
+                                let formattedTime = label;
                                 try {
-                                    return `Czas: ${new Date(label as string | number).toLocaleString()}`;
-                                } catch {
-                                    return `Czas: ${String(label)}`;
-                                }
+                                    formattedTime = new Date(label).toLocaleString();
+                                } catch {}
+
+                                return (
+                                    <div className="custom-chart-tooltip">
+                                        <div className="tooltip-time">Czas: {formattedTime}</div>
+                                        <div className="tooltip-items">
+                                            {payload.map((item: any) => {
+                                                const dataKey = item.dataKey;
+                                                const seriesId = dataKey.replace('series_', '');
+                                                const seriesObj = selectedSeriesObjects.find(s => String(s.id) === String(seriesId));
+                                                
+                                                const seriesName = seriesObj ? seriesObj.name : `Seria ${seriesId}`;
+                                                const seriesUnit = seriesObj?.unit ? ` ${seriesObj.unit}` : '';
+                                                const seriesColor = item.color || seriesObj?.color || '#006666';
+
+                                                return (
+                                                    <div key={dataKey} className="tooltip-item" style={{ color: seriesColor }}>
+                                                        <span className="tooltip-series-name">{seriesName}:</span>
+                                                        <span className="tooltip-series-value">
+                                                            {item.value}{seriesUnit}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
                             }}
                         />
 
                         {selectedSeriesObjects.map((series, index) => {
                             const shape = SHAPES[index % SHAPES.length];
                             const dataKey = `series_${series.id}`;
+                            const seriesColor = series.color || '#006666';
 
                             return (
                                 <Line
                                     key={series.id}
                                     type="linear"
                                     dataKey={dataKey}
-                                    stroke={series.color}
+                                    stroke={seriesColor}
                                     strokeWidth={2}
+                                    dot={renderCustomDot(shape, seriesColor, series.id, hoveredTimestamp, hoveredCell)}
+                                    activeDot={{ r: 7, stroke: '#000000', strokeWidth: 1.5, fill: seriesColor }}
                                     connectNulls={true}
                                     isAnimationActive={false}
-                                    dot={renderCustomDot(shape, series.color, series.id, hoveredTimestamp, hoveredCell)}
-                                    activeDot={{ r: 6, stroke: '#000', strokeWidth: 1 }}
                                 />
                             );
                         })}

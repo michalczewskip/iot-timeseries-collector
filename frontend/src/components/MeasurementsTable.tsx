@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { type SeriesInfo, type MeasurementData } from './MeasurementsChart';
+import './MeasurementsTable.css';
 
 interface MeasurementsTableProps {
     selectedSeriesObjects: SeriesInfo[];

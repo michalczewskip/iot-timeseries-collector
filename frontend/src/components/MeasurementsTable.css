@@ -1,0 +1,70 @@
+.measurements-table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Zabezpieczenie przed wyjściem tabeli poza ekran na telefonach */
+  background: var(--dropdown-bg, #ffffff);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 102, 102, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 102, 102, 0.08);
+  box-sizing: border-box;
+}
+
+.measurements-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+/* --- NAGŁÓWEK TABELI --- */
+.measurements-th {
+  background-color: #f0fdf4;
+  background-color: rgba(0, 102, 102, 0.04);
+  color: #006666;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 2px solid rgba(0, 102, 102, 0.15);
+  white-space: nowrap;
+}
+
+/* --- WIERSZE I KOMÓRKI --- */
+.measurements-td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.measurements-td-time {
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+/* Ostatni wiersz bez dolnej ramki */
+.measurements-tr:last-child .measurements-td {
+  border-bottom: none;
+}
+
+/* --- INTERAKCJE I HOVER (SYNCHRONIZACJA Z WYKRESEM) --- */
+.measurements-tr:hover,
+.measurements-tr.row-hovered {
+  background-color: rgba(0, 102, 102, 0.06); /* Podświetlenie całego wiersza */
+}
+
+.measurements-td.cell-hovered {
+  background-color: rgba(0, 102, 102, 0.12); /* Mocniejsze podświetlenie konkretnej komórki */
+  color: #004d4d;
+  font-weight: 600;
+}
+
+/* --- STAN PUSTY --- */
+.measurements-table-empty {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+  background: var(--dropdown-bg, #ffffff);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 102, 102, 0.12);
+  font-size: 0.9rem;
+}
