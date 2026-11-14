@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import './LoginModal.css'
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -12,6 +13,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     const [error, setError] = useState('');
     const { login } = useAuth();
 
+    const modalContentRef = useRef<HTMLDivElement>(null);
+
     // Clear username, password and error every before every opening of login pop up
     useEffect(() => {
         if (isOpen) {
@@ -23,7 +26,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
     if (!isOpen) return null; // Render nothing if pop up not open
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Jeśli kliknięty element to bezpośrednio overlay (szare tło), a nie zawartość modala
+        if (modalContentRef.current && !modalContentRef.current.contains(e.target as Node)) {
+            onClose();
+        }
+    };
+
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
         setError('');
 
@@ -48,8 +58,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
+            <div className="modal-content" ref={modalContentRef}>
                 <h3>Logowanie do Systemu IoT</h3>
                 {error && <p className="error-text">{error}</p>}
                 <form onSubmit={handleSubmit}>

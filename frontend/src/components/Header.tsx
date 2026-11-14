@@ -4,16 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import { LoginModal } from './LoginModal';
 import { ChangePasswordModal } from './ChangePasswordModal';
 
+import './Header.css'
+
 export function Header() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isAuthenticated, logout, username } = useAuth(); // Pobieramy też username z kontekstu
+    const { isAuthenticated, logout, username } = useAuth();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     
-    const userMenuRef = useRef(null);
+    const userMenuRef = useRef<HTMLDivElement>(null);
 
     const isDashboardActive = location.pathname === '/dashboard' || location.pathname === '/';
     const isAdminActive = location.pathname === '/admin';
@@ -21,7 +23,7 @@ export function Header() {
     // Automatyczne zamykanie menu po kliknięciu poza jego obszar
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (userMenuRef.current && !(userMenuRef.current as HTMLElement).contains(event.target as Node)) {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setIsUserMenuOpen(false);
             }
         };
@@ -57,26 +59,23 @@ export function Header() {
 
                 <div className="auth-action-container">
                     {isAuthenticated ? (
-                        /* Rozwijane menu z ikoną, nazwą użytkownika i strzałką */
-                        <div className="user-menu-container" ref={userMenuRef} style={{ position: 'relative', display: 'inline-block' }}>
+                        <div className="user-menu-container" ref={userMenuRef}>
                             <button 
                                 className="auth-btn user-dropdown-toggle"
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                             >
                                 <span>👤</span>
-                                <span style={{ fontWeight: 500 }}>{username || 'Użytkownik'}</span>
-                                <span style={{ fontSize: '0.8rem' }}>{isUserMenuOpen ? '▲' : '▼'}</span>
+                                <span className="username-text">{username || 'Użytkownik'}</span>
+                                <span className="dropdown-arrow">{isUserMenuOpen ? '▲' : '▼'}</span>
                             </button>
 
                             {isUserMenuOpen && (
-                                <div className="user-dropdown-menu" style={{ position: 'absolute', right: 0, top: '100%', background: '#fff', border: '1px solid #ccc', zIndex: 100, minWidth: '150px' }}>
+                                <div className="user-dropdown-menu">
                                     <button 
                                         onClick={() => {
                                             setIsUserMenuOpen(false);
                                             setIsPasswordModalOpen(true);
                                         }}
-                                        style={{ display: 'block', width: '100%', padding: '10px 16px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                                     >
                                         Zmień hasło
                                     </button>
@@ -85,7 +84,6 @@ export function Header() {
                                             setIsUserMenuOpen(false);
                                             logout();
                                         }}
-                                        style={{ display: 'block', width: '100%', padding: '10px 16px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', borderTop: '1px solid #eee' }}
                                     >
                                         Wyloguj
                                     </button>
