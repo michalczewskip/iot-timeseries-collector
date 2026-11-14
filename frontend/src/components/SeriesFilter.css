@@ -1,26 +1,52 @@
 .series-filter-container {
   position: relative;
   display: inline-block;
+  width: 100%;
+}
+
+.series-filter-toggle-btn {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.series-filter-toggle-btn:hover {
+  border-color: var(--primary-teal, #006666);
+  background-color: #ffffff;
+  color: var(--primary-teal, #006666);
 }
 
 .series-dropdown-menu {
   position: absolute;
-  top: 105%;
+  top: calc(100% + 6px);
   left: 0;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--dropdown-bg, #ffffff);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 102, 102, 0.15);
   padding: 12px;
   z-index: 100;
-  min-width: 220px;
+  min-width: 240px;
+  box-sizing: border-box;
 }
 
 .series-dropdown-actions {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 8px;
 }
 
@@ -28,34 +54,54 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 12px;
-  padding: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 4px;
+  transition: opacity 0.2s;
+}
+
+.series-dropdown-actions button:hover {
+  opacity: 0.8;
 }
 
 .select-all-btn {
-  color: #007bff;
+  color: var(--primary-teal, #006666);
 }
 
 .clear-all-btn {
-  color: #dc3545;
+  color: #c53030;
 }
 
 .series-checkbox-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .series-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.9rem;
+  color: #334155;
+  user-select: none;
+}
+
+.series-checkbox-input {
+  accent-color: var(--primary-teal, #006666);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .no-series-text {
-  font-size: 13px;
-  color: #666666;
+  font-size: 0.85rem;
+  color: #64748b;
   margin: 0;
+  text-align: center;
+  padding: 8px 0;
 }

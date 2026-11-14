@@ -3,6 +3,8 @@ import { FilterPanel } from "../components/FilterPanel";
 import { type SeriesInfo, type MeasurementData, MeasurementsChart } from '../components/MeasurementsChart';
 import { MeasurementsTable } from '../components/MeasurementsTable';
 
+import './Dashboard.css'
+
 const getLocalDateTime = (daysOffset = 0, hours = 12) => {
   const d = new Date();
   d.setDate(d.getDate() + daysOffset);
@@ -16,7 +18,6 @@ const getLocalDateTime = (daysOffset = 0, hours = 12) => {
 
   return `${year}-${month}-${day}T${h}:${m}`;
 };
-
 export function Dashboard() {
   const [fromDate, setFromDate] = useState(getLocalDateTime(-7, 12));
   const [toDate, setToDate] = useState(getLocalDateTime(7, 12));
@@ -83,38 +84,48 @@ export function Dashboard() {
   }, [fromDate, toDate, selectedSeries, seriesList]);
 
   return (
-    <div className="page-content" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto', padding: '16px', boxSizing: 'border-box' }}>
-      <FilterPanel
-        fromDate={fromDate}
-        setFromDate={setFromDate}
-        toDate={toDate}
-        setToDate={setToDate}
-        availableSeries={seriesList.map(s => s.name)}
-        selectedSeries={selectedSeries}
-        onSeriesChange={setSelectedSeries}
-      />
+    <div className="dashboard-wrapper">
+      <div className="dashboard-content">
 
-      <section className="chart-section" style={{ marginTop: '20px', width: '100%' }}>
-        <MeasurementsChart
-          selectedSeriesObjects={activeSeriesObjects}
-          measurements={measurements}
-          hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={setHoveredTimestamp}
-          hoveredCell={hoveredCell}
-          onHoverCell={setHoveredCell}
-        />
-      </section>
+        {/* Sekcja filtrów */}
+        <div className="filter-card">
+          <div className="filter-panel-row">
+            <FilterPanel
+              fromDate={fromDate}
+              setFromDate={setFromDate}
+              toDate={toDate}
+              setToDate={setToDate}
+              availableSeries={seriesList.map(s => s.name)}
+              selectedSeries={selectedSeries}
+              onSeriesChange={setSelectedSeries}
+            />
+          </div>
+        </div>
+        {/* Sekcja wykresu */}
+        <section className="chart-section">
+          <MeasurementsChart
+            selectedSeriesObjects={activeSeriesObjects}
+            measurements={measurements}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={setHoveredTimestamp}
+            hoveredCell={hoveredCell}
+            onHoverCell={setHoveredCell}
+          />
+        </section>
 
-      <section className="table-section" style={{ marginTop: '30px', width: '100%' }}>
-        <MeasurementsTable
-          selectedSeriesObjects={activeSeriesObjects}
-          measurements={measurements}
-          hoveredTimestamp={hoveredTimestamp}
-          onHoverTimestamp={setHoveredTimestamp}
-          hoveredCell={hoveredCell}
-          onHoverCell={setHoveredCell}
-        />
-      </section>
+        {/* Sekcja tabeli */}
+        <section className="table-section">
+          <MeasurementsTable
+            selectedSeriesObjects={activeSeriesObjects}
+            measurements={measurements}
+            hoveredTimestamp={hoveredTimestamp}
+            onHoverTimestamp={setHoveredTimestamp}
+            hoveredCell={hoveredCell}
+            onHoverCell={setHoveredCell}
+          />
+        </section>
+
+      </div>
     </div>
   );
 }

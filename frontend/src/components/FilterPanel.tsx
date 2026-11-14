@@ -1,4 +1,15 @@
 import { SeriesFilter } from './SeriesFilter';
+import './FilterPanel.css'
+
+interface FilterPanelProps {
+    fromDate: string;
+    setFromDate: (value: string) => void;
+    toDate: string;
+    setToDate: (value: string) => void;
+    availableSeries: string[];
+    selectedSeries: string[];
+    onSeriesChange: (selected: string[]) => void;
+}
 
 interface FilterPanelProps {
     fromDate: string;
@@ -45,6 +56,7 @@ export function FilterPanel({
                     onChange={(e) => setToDate(e.target.value)}
                 />
             </div>
+
             <div className="series-filter-wrapper">
                 <SeriesFilter
                     availableSeries={availableSeries}
