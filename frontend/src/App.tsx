@@ -8,7 +8,9 @@ export function App() {
   return (
     <BrowserRouter>
       <div className="app-layout">
-        <Header />
+        <header className="app-header">
+          <Header />
+        </header>
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

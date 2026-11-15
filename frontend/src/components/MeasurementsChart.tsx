@@ -168,7 +168,7 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={chartData}
-                        margin={{ top: 15, right: 15, left: -10, bottom: 35 }}
+                        margin={{ top: 15, right: 40, left: 10, bottom: 50 }}
                         onMouseMove={(e: any) => {
                             if (e && e.activePayload && e.activePayload.length > 0) {
                                 onHoverTimestamp?.(e.activePayload[0].payload.timestamp);
@@ -186,7 +186,7 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                             interval="preserveStartEnd"
                             angle={-25}
                             textAnchor="end"
-                            height={40}
+                            height={45}
                             tickLine={{ stroke: '#cbd5e1' }}
                             axisLine={{ stroke: '#cbd5e1' }}
                         />

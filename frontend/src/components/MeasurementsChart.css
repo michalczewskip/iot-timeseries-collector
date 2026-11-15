@@ -94,3 +94,59 @@
     height: 300px;
   }
 }
+
+@media print {
+  body, html {
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .measurements-chart-wrapper {
+    width: 100% !important;
+    display: block !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Dajemy zapas (padding) po bokach oraz wewnętrzny box-sizing, */
+  /* co sprawia, że Recharts automatycznie zmniejszy się o te 40px i schowa ten szary pasek! */
+  .chart-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 350px !important;
+    max-height: 350px !important;
+    padding: 0 25px !important; /* Tutaj dodajemy upragniony zapas! */
+    box-sizing: border-box !important;
+    overflow: hidden !important; /* Ukrywa wszelkie paski przewijania */
+    position: relative !important;
+    margin: 0 auto 15px auto !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .chart-container > div {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .chart-container .recharts-responsive-container {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .chart-container svg.recharts-surface {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Całkowite odcięcie jakichkolwiek pasków */
+  .recharts-scrollbar,
+  .recharts-brush {
+    display: none !important;
+  }
+}

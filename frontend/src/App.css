@@ -10,3 +10,24 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+
+@media print {
+  /* Ukrywamy nagłówek globalny, nawigację oraz inne elementy sterujące całego layoutu */
+  header,
+  .app-header,
+  nav,
+  .navigation {
+    display: none !important;
+  }
+
+  /* Resetujemy tła i marginesy w głównym układzie aplikacji do druku */
+  body, 
+  .app-layout,
+  .main-content {
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+}
