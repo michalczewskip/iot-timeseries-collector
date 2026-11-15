@@ -1,6 +1,6 @@
 .measurements-table-wrapper {
   width: 100%;
-  overflow-x: auto; /* Zabezpieczenie przed wyjściem tabeli poza ekran na telefonach */
+  overflow-x: auto;
   background: var(--dropdown-bg, #ffffff);
   border-radius: 12px;
   border: 1px solid rgba(0, 102, 102, 0.12);
@@ -15,17 +15,21 @@
   font-family: inherit;
   font-size: 0.9rem;
   color: #334155;
+  table-layout: fixed; /* Kluczowe: pozwala kontrolować szerokości i zawijanie kolumn */
 }
 
 /* --- NAGŁÓWEK TABELI --- */
 .measurements-th {
-  background-color: #f0fdf4;
   background-color: rgba(0, 102, 102, 0.04);
   color: #006666;
   font-weight: 600;
   padding: 12px 16px;
   border-bottom: 2px solid rgba(0, 102, 102, 0.15);
-  white-space: nowrap;
+  
+  /* Zawijanie tekstu w nagłówkach dla szerokości ok. 800px */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* --- WIERSZE I KOMÓRKI --- */
@@ -33,15 +37,18 @@
   padding: 10px 16px;
   border-bottom: 1px solid #e2e8f0;
   transition: background-color 0.15s ease, color 0.15s ease;
+  
+  /* Zawijanie tekstu w komórkach */
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .measurements-td-time {
   font-weight: 500;
   color: #64748b;
-  white-space: nowrap;
+  white-space: nowrap; /* Czas pozostaje w jednej linii dla czytelności */
 }
 
-/* Ostatni wiersz bez dolnej ramki */
 .measurements-tr:last-child .measurements-td {
   border-bottom: none;
 }
@@ -49,11 +56,11 @@
 /* --- INTERAKCJE I HOVER (SYNCHRONIZACJA Z WYKRESEM) --- */
 .measurements-tr:hover,
 .measurements-tr.row-hovered {
-  background-color: rgba(0, 102, 102, 0.06); /* Podświetlenie całego wiersza */
+  background-color: rgba(0, 102, 102, 0.08) !important;
 }
 
 .measurements-td.cell-hovered {
-  background-color: rgba(0, 102, 102, 0.12); /* Mocniejsze podświetlenie konkretnej komórki */
+  background-color: rgba(0, 102, 102, 0.16) !important;
   color: #004d4d;
   font-weight: 600;
 }
@@ -67,4 +74,90 @@
   border-radius: 12px;
   border: 1px solid rgba(0, 102, 102, 0.12);
   font-size: 0.9rem;
+}
+
+/* --- RESPONSYWNOŚĆ (Poniżej 768px - Układ kart) --- */
+@media screen and (max-width: 768px) {
+  .measurements-table-wrapper {
+    overflow-x: hidden;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .measurements-table {
+    table-layout: auto; /* Resetujemy fixed layout dla widoku kart */
+  }
+
+  .measurements-table thead {
+    display: none;
+  }
+
+  .measurements-table, 
+  .measurements-table tbody, 
+  .measurements-table tr, 
+  .measurements-table td {
+    display: block;
+    width: 100%;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .measurements-tr {
+    background: #ffffff;
+    border: 1px solid rgba(0, 102, 102, 0.15);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .measurements-tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .measurements-td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 10px 14px;
+    text-align: left;
+    min-width: 0 !important;
+    white-space: normal !important;
+  }
+
+  .measurements-td:last-child {
+    border-bottom: none;
+  }
+
+  .measurements-td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.85rem;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 12px;
+    max-width: 50%;
+  }
+
+  .measurements-td-time {
+    background-color: #f8fafc;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #006666;
+    font-weight: 600;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .measurements-td {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .measurements-td::before {
+    font-size: 0.8rem;
+  }
 }

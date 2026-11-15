@@ -45,7 +45,7 @@ export const MeasurementsTable: React.FC<MeasurementsTableProps> = ({
 
     return (
         <div className="measurements-table-wrapper">
-            <table className="measurements-table">
+            <table className="measurements-table" aria-label="Tabela pomiarów czujników">
                 <thead>
                     <tr>
                         <th className="measurements-th">Czas pomiaru</th>
@@ -59,6 +59,7 @@ export const MeasurementsTable: React.FC<MeasurementsTableProps> = ({
                 <tbody>
                     {tableData.map((row) => {
                         const isRowHovered = hoveredTimestamp === row.timestamp;
+                        const formattedTime = new Date(row.timestamp).toLocaleString();
                         return (
                             <tr 
                                 key={row.timestamp}
@@ -66,16 +67,18 @@ export const MeasurementsTable: React.FC<MeasurementsTableProps> = ({
                                 onMouseEnter={() => onHoverTimestamp(row.timestamp)}
                                 onMouseLeave={() => onHoverTimestamp(null)}
                             >
-                                <td className="measurements-td measurements-td-time">
-                                    {new Date(row.timestamp).toLocaleString()}
+                                <td className="measurements-td measurements-td-time" data-label="Czas pomiaru:">
+                                    {formattedTime}
                                 </td>
                                 {selectedSeriesObjects.map((series) => {
                                     const val = row[series.id];
-                                    const isCellHovered = hoveredCell?.timestamp === row.timestamp && hoveredCell?.seriesId === series.id;
+                                    const isCellHovered = hoveredCell?.timestamp === row.timestamp && String(hoveredCell?.seriesId) === String(series.id);
+                                    const seriesLabel = `${series.name}${series.unit ? ` (${series.unit})` : ''}:`;
                                     return (
                                         <td 
                                             key={series.id}
                                             className={`measurements-td ${isCellHovered ? 'cell-hovered' : ''} ${isRowHovered ? 'row-hovered' : ''}`}
+                                            data-label={seriesLabel}
                                             onMouseEnter={() => {
                                                 onHoverTimestamp(row.timestamp);
                                                 onHoverCell?.({ timestamp: row.timestamp, seriesId: series.id });
