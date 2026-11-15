@@ -15,7 +15,6 @@
   width: 100%;
 }
 
-
 .from-filter,
 .to-filter {
   display: grid;
@@ -61,4 +60,50 @@
   flex-direction: column;
   flex: 1;
   min-width: 220px;
+}
+
+/* --- STYLIZACJA PRZYCISKU DRUKOWANIA --- */
+.filter-actions-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Wypycha przycisk maksymalnie w prawą stronę w rzędzie fleksyjnym */
+}
+
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  color: #006666;
+  border: 1px solid rgba(0, 102, 102, 0.2);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-print:hover {
+  background-color: var(--primary-teal, #006666);
+  color: #ffffff;
+  border-color: var(--primary-teal, #006666);
+}
+
+.btn-print:active {
+  transform: scale(0.98);
+}
+
+/* Dostosowanie dla węższych ekranów, aby przycisk ładnie się układał */
+@media screen and (max-width: 768px) {
+  .filter-actions-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .btn-print {
+    width: 100%;
+  }
 }
