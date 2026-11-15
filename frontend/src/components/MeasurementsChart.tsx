@@ -204,10 +204,12 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                             content={({ active, payload, label }) => {
                                 if (!active || !payload || payload.length === 0) return null;
 
-                                let formattedTime = label;
-                                try {
-                                    formattedTime = new Date(label).toLocaleString();
-                                } catch {}
+                                let formattedTime = label ?? '';
+                                if (label !== undefined) {
+                                    try {
+                                        formattedTime = new Date(label).toLocaleString();
+                                    } catch { }
+                                }
 
                                 return (
                                     <div className="custom-chart-tooltip">
@@ -217,7 +219,7 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
                                                 const dataKey = item.dataKey;
                                                 const seriesId = dataKey.replace('series_', '');
                                                 const seriesObj = selectedSeriesObjects.find(s => String(s.id) === String(seriesId));
-                                                
+
                                                 const seriesName = seriesObj ? seriesObj.name : `Seria ${seriesId}`;
                                                 const seriesUnit = seriesObj?.unit ? ` ${seriesObj.unit}` : '';
                                                 const seriesColor = item.color || seriesObj?.color || '#006666';
