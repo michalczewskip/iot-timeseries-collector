@@ -106,6 +106,7 @@ public class SeriesService {
         series.setName(entity.getName());
         series.setMinValue(entity.getMinValue());
         series.setMaxValue(entity.getMaxValue());
+        series.setUnit(JsonNullable.of(entity.getUnit()));
         series.setColor(entity.getColor());
         series.setId(entity.getId());
         return series;

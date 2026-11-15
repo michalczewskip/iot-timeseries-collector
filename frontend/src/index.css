@@ -1,0 +1,26 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-body, #f9f9f9);
+  overflow-x: hidden;
+}
+
+:root {
+  --primary-teal: #006666;
+  --primary-teal-hover: #005252;
+  --accent-blue: #00b4d8;
+  
+  /* Kolory tekstów i tła */
+  --text-main: #333333;
+  --text-light: #ffffff;
+  --bg-body: #f9f9f9;
+  
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+}

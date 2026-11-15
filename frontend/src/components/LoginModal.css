@@ -1,0 +1,175 @@
+/* Tło przyciemniające całe okno przeglądarki */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Właściwe okno modala */
+.modal-content {
+  background: var(--dropdown-bg, #ffffff);
+  color: var(--dropdown-text, #333333);
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px;
+  border-radius: var(--border-radius, 12px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+/* Animacja pojawiania się modala */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Nagłówek w modalu */
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--primary-teal, #006666);
+  text-align: center;
+}
+
+/* Komunikat o błędzie */
+.error-text {
+  background-color: #fde8e8;
+  color: #c53030;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  border: 1px solid #f8b4b4;
+  text-align: center;
+}
+
+/* Komunikat o sukcesie (dla zmiany hasła) */
+.success-text {
+  background-color: #ecfdf5;
+  color: #065f46;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  border: 1px solid #a7f3d0;
+  text-align: center;
+}
+
+/* Grupy pól formularza */
+.modal-content form div {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-content label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Pola tekstowe i hasła */
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #f9fafb;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary-teal, #006666);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.15);
+}
+
+/* Kontener przycisków */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-direction: row !important;
+}
+
+/* Wspólny styl przycisków w modalu */
+.modal-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+/* Przycisk potwierdzenia (Główna akcja) w kolorze morskim */
+.modal-buttons button[type="submit"] {
+  background-color: var(--primary-teal, #006666);
+  color: var(--text-light, #ffffff);
+}
+
+.modal-buttons button[type="submit"]:hover {
+  background-color: #005252;
+}
+
+/* Przycisk anulowania (szary / subtelny) */
+.modal-buttons button[type="button"] {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.modal-buttons button[type="button"]:hover {
+  background-color: #d1d5db;
+}
+
+/* Responsywność dla ekranów mniejszych niż 480px */
+@media screen and (max-width: 480px) {
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+
+  .modal-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  .modal-buttons {
+    flex-direction: column !important; /* Na bardzo wąskich ekranach przyciski jeden pod drugim */
+    gap: 8px;
+  }
+}

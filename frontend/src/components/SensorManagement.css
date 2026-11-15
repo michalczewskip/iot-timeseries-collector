@@ -1,0 +1,265 @@
+.sensor-management-container {
+  background: var(--dropdown-bg, #ffffff);
+  border-radius: var(--border-radius, 12px);
+  padding: 20px 24px;
+  box-shadow: 0 4px 12px rgba(0, 102, 102, 0.08);
+  border: 1px solid rgba(0, 102, 102, 0.12);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.sensor-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.sensor-section-heading {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary-teal, #006666);
+}
+
+/* Kontener z responsywnym przewijaniem tabeli */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius, 8px);
+  background: transparent;
+}
+
+.series-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.series-table th,
+.series-table td {
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: var(--text-main, #333333);
+}
+
+.series-table th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: var(--primary-teal, #006666);
+}
+
+.series-table tbody tr:last-child td {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.series-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.series-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Komunikaty alertów w spójnej estetyce */
+.alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.alert.error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.alert.success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.series-actions-cell {
+  white-space: nowrap;
+}
+
+/* Przyciski */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background-color: var(--primary-teal, #006666);
+  color: var(--text-light, #ffffff);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-teal-hover, #005252);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  margin-right: 6px;
+}
+
+.btn-sm:last-child {
+  margin-right: 0;
+}
+
+.btn-delete {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.loading-text,
+.empty-text {
+  text-align: center;
+  color: #64748b;
+  padding: 24px;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0;
+}
+
+/* --- RESPONSYWNOŚĆ DLA WĄSKICH EKRANÓW (Poniżej 768px) --- */
+@media screen and (max-width: 768px) {
+  .sensor-management-container {
+    padding: 12px;
+  }
+
+  .sensor-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sensor-action-bar .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .series-table thead {
+    display: none;
+  }
+
+  .series-table, 
+  .series-table tbody, 
+  .series-table tr, 
+  .series-table td {
+    display: block;
+    width: 100%;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .series-table tbody tr {
+    background: #ffffff;
+    border: 1px solid rgba(0, 102, 102, 0.15);
+    border-radius: var(--border-radius, 8px);
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .series-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Komórki jako elastyczne wiersze z tekstem do lewej */
+  .series-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 10px 14px;
+    text-align: left;
+    box-sizing: border-box;
+    min-width: 0 !important;
+  }
+
+  .series-table td:last-child {
+    border-bottom: none;
+    background-color: #f8fafc;
+    justify-content: center;
+  }
+
+  /* Wyświetlanie etykiety po lewej stronie w widoku mobilnym */
+  .series-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.85rem;
+    text-align: left;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  /* Pierwsza komórka (Nazwa czujnika) jako nagłówek karty */
+  .series-table tbody tr td:first-child {
+    background-color: #f8fafc;
+    font-size: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+  }
+
+  .series-table tbody tr td:first-child::before {
+    display: none;
+  }
+
+  /* Komórka przycisku wyrejestrowania */
+  .series-table td.series-actions-cell {
+    display: flex !important;
+    justify-content: stretch !important;
+    background-color: #f8fafc;
+  }
+
+  .series-table td.series-actions-cell::before {
+    display: none !important;
+  }
+
+  .series-table td.series-actions-cell .btn {
+    flex: 1;
+    margin-right: 0 !important;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .sensor-management-container {
+    padding: 10px;
+  }
+
+  .series-table td {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .series-table td::before {
+    font-size: 0.8rem;
+  }
+}

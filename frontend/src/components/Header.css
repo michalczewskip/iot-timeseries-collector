@@ -1,0 +1,194 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-teal, #006666);
+  color: var(--text-light, #ffffff);
+  padding: 12px 24px;
+  box-shadow: var(--box-shadow, 0 4px 6px rgba(0, 0, 0, 0.1));
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1000;
+}
+
+.header-logo h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: inherit;
+  margin: 0;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+/* --- Przyciski przełączające (stanowy na środku) --- */
+.toggle-container {
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: var(--border-radius, 8px);
+  gap: 4px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.toggle-btn:hover {
+  color: var(--text-light, #ffffff);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Aktywny stan przycisku dwustanowego */
+.toggle-btn.active {
+  background-color: var(--text-light, #ffffff);
+  color: var(--primary-teal, #006666);
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.auth-action-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Ogólny styl przycisków akcji (Zaloguj) oraz przełącznika profilu */
+.auth-btn {
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-light, #ffffff);
+  padding: 8px 16px;
+  border-radius: var(--border-radius, 8px);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-btn:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Specyficzne klasy dla elementów przycisku profilu (przeniesione z inline stylów) */
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.username-text {
+  font-weight: 500;
+}
+
+.dropdown-arrow {
+  font-size: 0.8rem;
+}
+
+/* --- Menu rozwijane użytkownika --- */
+.user-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: var(--dropdown-bg, #ffffff);
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius, 8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.user-dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--dropdown-text, #333333);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.user-dropdown-menu button:hover {
+  background-color: #f1f5f9;
+}
+
+/* Dodanie delikatnej linii oddzielającej w menu rozwijanym dla wylogowania (zamiast inline borderTop) */
+.user-dropdown-menu button:last-child {
+  border-top: 1px solid #eee;
+}
+
+/* Responsywność dla ekranów mniejszych niż 768px */
+@media screen and (max-width: 768px) {
+  .app-header {
+    padding: 10px 16px;
+  }
+
+  .header-logo h2 {
+    font-size: 1.1rem;
+  }
+
+  .toggle-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .auth-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Dostosowanie dla małych ekranów (smartfony aż do 360px) */
+@media screen and (max-width: 480px) {
+  .app-header {
+    flex-wrap: wrap; /* Elementy przechodzą do nowej linii, gdy zabraknie miejsca */
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  /* Rząd 1: Logo po lewej, Zaloguj / Użytkownik po prawej */
+  .header-logo {
+    order: 1;
+    margin-right: auto;
+  }
+
+  .auth-action-container {
+    order: 2;
+  }
+
+  /* Rząd 2: Przełącznik stanowisk rozciągnięty na sam środek/całą szerokość */
+  .toggle-container {
+    order: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .toggle-btn {
+    flex: 1; /* Przyciski dzielą równo szerokość ekranu, ułatwiając klikanie palcem */
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 0.8rem;
+  }
+
+  /* Na ekranach 360px ukrywamy sam tekst nazwy użytkownika, zostawiając ikonę i strzałkę */
+  .user-dropdown-toggle .username-text {
+    display: none; 
+  }
+}

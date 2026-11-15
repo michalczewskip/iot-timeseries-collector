@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.iottimeseriescollector.service;
 
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pw.elka.iottimeseriescollector.entity.SensorEntity;
@@ -8,6 +9,7 @@ import pl.edu.pw.elka.iottimeseriescollector.exception.UnprocessableEntityExcept
 import pl.edu.pw.elka.iottimeseriescollector.model.Sensor;
 import pl.edu.pw.elka.iottimeseriescollector.model.SensorCreated;
 import pl.edu.pw.elka.iottimeseriescollector.model.SensorInput;
+import pl.edu.pw.elka.iottimeseriescollector.repository.MeasurementRepository;
 import pl.edu.pw.elka.iottimeseriescollector.repository.SensorRepository;
 import pl.edu.pw.elka.iottimeseriescollector.repository.SeriesRepository;
 import pl.edu.pw.elka.iottimeseriescollector.security.apikey.ApiKeyManager;
@@ -22,13 +24,15 @@ public class SensorService {
     private final SensorRepository sensorRepository;
     private final SeriesRepository seriesRepository;
     private final ApiKeyManager apiKeyManager;
+    private final MeasurementRepository measurementRepository;
 
     public SensorService(SensorRepository sensorRepository,
                          SeriesRepository seriesRepository,
-                         ApiKeyManager apiKeyManager) {
+                         ApiKeyManager apiKeyManager, MeasurementRepository measurementRepository) {
         this.sensorRepository = sensorRepository;
         this.seriesRepository = seriesRepository;
         this.apiKeyManager = apiKeyManager;
+        this.measurementRepository = measurementRepository;
     }
 
     @Transactional(readOnly = true)
@@ -74,13 +78,15 @@ public class SensorService {
         sensorRepository.delete(sensor);
     }
 
-
     private Sensor mapEntityToSensor(SensorEntity entity) {
         Sensor sensor = new Sensor();
         sensor.setId(entity.getId());
         sensor.setName(entity.getName());
         sensor.setSeriesId(entity.getSeriesEntity().getId());
         sensor.createdAt(entity.getCreatedAt());
+
+        measurementRepository.findFirstBySensorEntityIdOrderByTimestampDesc(entity.getId())
+                .ifPresent(m -> sensor.setLastMeasurementAt(JsonNullable.of(m.getTimestamp())));
         return sensor;
     }
 }
