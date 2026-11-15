@@ -3,6 +3,8 @@ import { ConfirmModal } from './ConfirmModal';
 import { SensorModal } from './SensorModal';
 import type { DataSeries } from './SeriesManagement';
 
+import './SensorManagement.css';
+
 export interface Sensor {
     id: string | number;
     name: string;
@@ -94,7 +96,6 @@ export const SensorManagement: React.FC<SensorManagementProps> = ({ token, serie
         setIsDeleteModalOpen(true);
     };
 
-    // Wykonanie wyrejestrowania po potwierdzeniu w modalu (DELETE /api/sensors/{sensorId})
     const handleConfirmDelete = async () => {
         if (!sensorToDelete) return;
 
@@ -123,9 +124,9 @@ export const SensorManagement: React.FC<SensorManagementProps> = ({ token, serie
     };
 
     return (
-        <section className="sensor-management-container" style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '30px' }}>
-            <div className="sensor-action-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
-                <h3 className="sensor-section-heading" style={{ margin: 0 }}>Zarządzanie Czujnikami IoT</h3>
+        <section className="sensor-management-container">
+            <div className="sensor-action-bar">
+                <h3 className="sensor-section-heading">Zarządzanie Czujnikami IoT</h3>
                 <button onClick={() => setIsCreateModalOpen(true)} className="btn btn-primary">
                     + Zarejestruj nowy czujnik
                 </button>
@@ -177,9 +178,15 @@ export const SensorManagement: React.FC<SensorManagementProps> = ({ token, serie
                                     return (
                                         <tr key={sensor.id}>
                                             <td><strong>{sensor.name}</strong></td>
-                                            <td>{matchedSeries ? matchedSeries.name : `ID: ${sensor.seriesId}`}</td>
-                                            <td>{sensor.createdAt ? new Date(sensor.createdAt).toLocaleString() : '-'}</td>
-                                            <td>{sensor.lastMeasurementAt ? new Date(sensor.lastMeasurementAt).toLocaleString() : 'Brak pomiarów'}</td>
+                                            <td data-label="Przypisana seria:">
+                                                {matchedSeries ? matchedSeries.name : `ID: ${sensor.seriesId}`}
+                                            </td>
+                                            <td data-label="Data utworzenia:">
+                                                {sensor.createdAt ? new Date(sensor.createdAt).toLocaleString() : '-'}
+                                            </td>
+                                            <td data-label="Ostatni pomiar:">
+                                                {sensor.lastMeasurementAt ? new Date(sensor.lastMeasurementAt).toLocaleString() : 'Brak pomiarów'}
+                                            </td>
                                             <td className="series-actions-cell">
                                                 <button 
                                                     onClick={() => handleDeleteClick(sensor)} 

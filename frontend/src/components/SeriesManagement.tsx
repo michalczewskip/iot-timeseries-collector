@@ -181,19 +181,17 @@ export const SeriesManagement: React.FC<SeriesManagementProps> = ({ token }) => 
                             <tbody>
                                 {seriesList.map((item) => (
                                     <tr key={item.id}>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                {/* Pasek / kropka koloru przed nazwą */}
-                                                <span 
-                                                    className="series-color-indicator"
-                                                    style={{ backgroundColor: item.color }}
-                                                    title={`Kolor: ${item.color}`}
-                                                />
-                                                <strong>{item.name}</strong>
-                                            </div>
+                                        <td className="series-cell-with-indicator">
+                                            {/* Pionowy pasek koloru na pełną wysokość wiersza przy lewym brzegu */}
+                                            <span 
+                                                className="series-row-indicator" 
+                                                style={{ backgroundColor: item.color }} 
+                                                title={`Kolor: ${item.color}`}
+                                            />
+                                            <strong>{item.name}</strong>
                                         </td>
-                                        <td>{item.minValue} do {item.maxValue}</td>
-                                        <td>{item.unit || '-'}</td>
+                                        <td data-label="Zakres:">{item.minValue} do {item.maxValue}</td>
+                                        <td data-label="Jednostka:">{item.unit || '-'}</td>
                                         <td className="series-actions-cell">
                                             <button 
                                                 onClick={() => handleEditClick(item)} 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { DataSeries } from './SeriesManagement';
 
+import './SensorModal.css';
+
 interface SensorModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -43,39 +45,31 @@ export const SensorModal: React.FC<SensorModalProps> = ({ isOpen, onClose, onSav
     };
 
     return (
-        <div style={{
-            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center',
-            alignItems: 'center', zIndex: 1000, padding: '15px', boxSizing: 'border-box'
-        }}>
-            <div style={{
-                background: '#fff', padding: '25px', borderRadius: '8px',
-                width: '100%', maxWidth: '500px', boxSizing: 'border-box',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-            }}>
-                <h3 style={{ marginTop: 0, marginBottom: '20px' }}>Rejestracja nowego czujnika IoT</h3>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h3 className="modal-title">Rejestracja nowego czujnika IoT</h3>
 
-                {error && <div className="alert error" role="alert" style={{ marginBottom: '15px' }}>{error}</div>}
+                {error && <div className="alert error" role="alert">{error}</div>}
 
                 {/* Jednorazowy klucz API (zgodnie z OpenAPI: klucz jest zwracany wyłącznie w tej odpowiedzi) */}
                 {generatedApiKey ? (
                     <div>
-                        <div style={{ backgroundColor: '#fff3cd', color: '#856404', padding: '12px', borderRadius: '6px', marginBottom: '20px', border: '1px solid #ffeeba', fontSize: '0.9rem' }}>
+                        <div className="api-key-warning-box">
                             <strong>Ważne!</strong> Klucz API (`X-API-Key`) jest zwracany wyłącznie w tej odpowiedzi. Serwer przechowuje tylko jego skrót. Po zamknięciu okna nie będzie już ponownie ujawniany.
                         </div>
 
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Jednorazowy Klucz API (X-API-Key):</label>
+                        <div className="form-group">
+                            <label>Jednorazowy Klucz API (X-API-Key):</label>
                             <input
                                 type="text"
+                                className="form-input api-key-input"
                                 readOnly
                                 value={generatedApiKey}
                                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                                style={{ width: '100%', padding: '10px', fontFamily: 'monospace', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
                             />
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div className="modal-buttons">
                             <button
                                 type="button"
                                 onClick={handleCloseModal}
@@ -88,26 +82,26 @@ export const SensorModal: React.FC<SensorModalProps> = ({ isOpen, onClose, onSav
                 ) : (
                     // Formularz rejestracji zgodny z SensorInput (name, seriesId)
                     <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Nazwa czujnika:</label>
+                        <div className="form-group">
+                            <label>Nazwa czujnika:</label>
                             <input
                                 type="text"
+                                className="form-input"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
                                 maxLength={100}
                                 placeholder="np. Czujnik temperatury #1"
-                                style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
                             />
                         </div>
 
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Powiązana seria danych:</label>
+                        <div className="form-group">
+                            <label>Powiązana seria danych:</label>
                             <select
+                                className="form-select"
                                 value={seriesId}
                                 onChange={(e) => setSeriesId(e.target.value)}
                                 required
-                                style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px', background: '#fff' }}
                             >
                                 <option value="">-- Wybierz serię --</option>
                                 {seriesList.map((series) => (
@@ -118,12 +112,11 @@ export const SensorModal: React.FC<SensorModalProps> = ({ isOpen, onClose, onSav
                             </select>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                        <div className="modal-buttons">
                             <button
                                 type="button"
                                 onClick={handleCloseModal}
-                                className="btn"
-                                style={{ background: '#6c757d', color: '#fff' }}
+                                className="btn btn-secondary"
                                 disabled={loading}
                             >
                                 Anuluj

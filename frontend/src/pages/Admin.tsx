@@ -5,6 +5,8 @@ import { SensorManagement } from '../components/SensorManagement';
 import { LoginModal } from '../components/LoginModal';
 import type { DataSeries } from '../components/SeriesManagement';
 
+import './Admin.css';
+
 export function Admin() {
     const { isAuthenticated, token } = useAuth();
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -30,10 +32,11 @@ export function Admin() {
         }
     }, [isAuthenticated]);
 
-    // Jeśli użytkownik nie jest zalogowany, blokujemy widok panelu i pokazujemy komunikat z przyciskiem logowania
+    // Jeśli użytkownik nie jest zalogowany, pokazujemy dopracowaną kartę braku dostępu
     if (!isAuthenticated) {
         return (
-            <div className="page-content admin-unauthorized" style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="page-content admin-unauthorized">
+                <div className="unauthorized-icon" aria-hidden="true">🔒</div>
                 <h2>Brak dostępu</h2>
                 <p>Do przeglądania panelu administratora oraz zarządzania systemem potrzebne są uprawnienia administratora.</p>
                 <p>Zaloguj się na konto z odpowiednimi uprawnieniami, aby kontynuować.</p>
@@ -41,7 +44,6 @@ export function Admin() {
                 <button 
                     className="auth-btn" 
                     onClick={() => setIsLoginModalOpen(true)}
-                    style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
                 >
                     Zaloguj się
                 </button>
@@ -58,17 +60,6 @@ export function Admin() {
     // Jeśli użytkownik jest zalogowany, wyświetlamy normalny panel administratora
     return (
         <div className="page-content admin-dashboard">
-            {/* Tag <label> z formalną podpowiedzią po najechaniu na nagłówek */}
-            <div style={{ marginBottom: '20px' }}>
-                <label 
-                    className="admin-header-label" 
-                    title="Panel administracyjny systemu IoT umożliwiający konfigurację oraz zarządzanie seriami pomiarowymi i czujnikami."
-                    style={{ display: 'inline-block', cursor: 'help' }}
-                >
-                    <h1 style={{ margin: 0, fontSize: '1.8rem', display: 'inline-block' }}>Panel Administratora</h1>
-                </label>
-            </div>
-
             <SeriesManagement token={token} />
 
             {/* Zarządzanie czujnikami IoT z przekazaną listą serii do selecta */}
